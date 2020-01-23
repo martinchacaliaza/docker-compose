@@ -1,0 +1,81 @@
+version: '3.7'
+services:
+  config-server:
+    image: config-server:v1
+    ports:
+      - "8888:8888"
+    restart: always
+    networks:
+      - springcloud 
+  gateway:
+    image: gateway:v1
+    ports:
+      - "8099:8099"
+    restart: always
+    networks:
+      - springcloud
+    depends_on: 
+      - config-server
+      - eureka-server  
+  eureka-server:
+    image: eureka-server:v1
+    ports:
+      - "9042:9042"
+    restart: always
+    networks:
+      - springcloud
+  mongobootcamp:
+    image: mongo
+    ports:
+      - "27017:27017"
+    restart: always
+    networks:
+      - springcloud
+  clients:
+    image: clients:v1
+    restart: always
+    networks:
+      - springcloud
+    depends_on: 
+      - config-server
+      - eureka-server
+      - mongobootcamp
+  bancario:
+    image: cuentascorrientes:v1
+    restart: always
+    networks:
+      - springcloud
+    depends_on: 
+       - config-server
+       - eureka-server
+       - mongobootcamp
+  credito:
+    image: cuentascreditos:v1
+    restart: always
+    networks:
+      - springcloud
+    depends_on: 
+       - config-server
+       - eureka-server
+       - mongobootcamp
+  operacionesbancario:
+    image: opercuentascorrientes:v1
+    restart: always
+    networks:
+      - springcloud
+    depends_on: 
+      - config-server
+      - eureka-server
+      - mongobootcamp
+  operacionescredito:
+    image: opercuentascredito:v1
+    restart: always
+    networks:
+      - springcloud
+    depends_on: 
+      - config-server
+      - eureka-server
+      - mongobootcamp
+networks:
+  springcloud:
+ 
